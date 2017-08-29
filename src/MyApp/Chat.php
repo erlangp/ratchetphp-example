@@ -13,13 +13,13 @@ class Chat implements MessageComponentInterface {
     public function onOpen(ConnectionInterface $conn) {
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
-        echo "New connection! ({$conn->resourceId}).\n";
+        echo "New connection! (#{$conn->resourceId}).\n";
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
         $numRecv = count($this->clients) - 1;
 	    echo sprintf(
-            'Connection %d sending message "%s" to %d other connection%s. '.
+            'Connection #%d sending message "%s" to %d other connection%s. '.
             "Please wait...\n",
             $from->resourceId,
             $msg,
@@ -35,7 +35,7 @@ class Chat implements MessageComponentInterface {
                 //sleep(5); // simulate heavy operations
                 
                 $client->send($msg);
-                echo "Message sent.\n";
+                echo "Message sent to #{$client->resourceId}.\n";
             }
         }
     }
@@ -44,11 +44,11 @@ class Chat implements MessageComponentInterface {
         // The connection is closed, remove it, as we can no longer sent it
         // messages
         $this->clients->detach($conn);
-        echo "Connection {$conn->resourceId} has disconnected.\n";
+        echo "Connection #{$conn->resourceId} has disconnected.\n";
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        echo "An error has occurred: {$e->getMessage()}.\n";
+        echo "An error has occurred: #{$conn->resourceId} {$e->getMessage()}.\n";
     	$conn->close();
     }
 }
